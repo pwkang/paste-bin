@@ -1,12 +1,12 @@
-name: Deploy Frontend
+name: Deploy Backend
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'frontend/**'
-      - '.github/workflows/deploy-frontend.yaml'
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yaml'
   workflow_dispatch:
 
 jobs:
@@ -29,15 +29,12 @@ jobs:
           run_install: false
 
       - name: Install dependencies
-        working-directory: ./frontend
+        working-directory: ./backend
         run: pnpm install --frozen-lockfile
 
-      - name: Install Vite Globally
-        run: npm install -g vite
-
       - name: Build project
-        working-directory: ./frontend
-        run: tsc && VITE_API_BASE_URL=${{ vars.API_BASE_URL }} vite build
+        working-directory: ./backend
+        run: pnpm build
 
       - name: Copy built files to server
         uses: appleboy/scp-action@v0.1.4
@@ -46,6 +43,22 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "frontend/dist/*"
-          target: ${{ vars.FRONTEND_DEPLOY_DIR }}
-          strip_components: 2
+          source: "backend/*"
+          target: ${{ vars.BACKEND_DEPLOY_DIR }}
+          strip_components: 1
+
+      - name: Start server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ${{ vars.BACKEND_DEPLOY_DIR }}
+            echo "FRONTEND_URL=${{ vars.FRONTEND_BASE_URL }}
+            API_PORT=${{ vars.API_PORT }}
+            " > .env
+            pm2 start ecosystem.config.js
+
+
