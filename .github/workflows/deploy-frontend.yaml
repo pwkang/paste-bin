@@ -33,6 +33,9 @@ jobs:
         working-directory: ./frontend
         run: pnpm install --frozen-lockfile
 
+      - name: Install Vite Globally
+        run: npm install -g vite
+
       - name: Build project
         working-directory: ./frontend
         run: tsc && VITE_API_BASE_URL=${{ vars.API_BASE_URL }} vite build
