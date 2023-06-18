@@ -49,4 +49,4 @@ jobs:
           port: ${{ secrets.PORT }}
           source: "frontend/dist/*"
           target: ${{ vars.DEPLOY_DIR }}
-          strip_components: 1
+          strip_components: 2
