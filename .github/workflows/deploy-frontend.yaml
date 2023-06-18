@@ -29,10 +29,8 @@ jobs:
           version: latest
           run_install: false
 
-      - name: Go to frontend directory
-        run: cd frontend
-
       - name: Install dependencies
+        working-directory: ./frontend
         run: pnpm install --frozen-lockfile
 
       - name: Build project
