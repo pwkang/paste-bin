@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - chore/update-workflows
     paths:
       - 'frontend/**'
   workflow_dispatch:
@@ -28,7 +29,7 @@ jobs:
         run: pnpm install
 
       - name: Build project
-        run: tsc && VITE_API_BASE_URL=${{ variables.API_BASE_URL }} vite build
+        run: tsc && VITE_API_BASE_URL=${{ vars.API_BASE_URL }} vite build
 
       - name: Copy built files to server
         uses: appleboy/scp-action@v0.1.4
@@ -38,6 +39,5 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
           source: "dist/*"
-          target: "${{ variables.DEPLOY_DIR }}"
+          target: ${{ vars.DEPLOY_DIR }}
           strip_components: 1
-          
