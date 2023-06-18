@@ -7,7 +7,7 @@ on:
       - chore/update-workflows
     paths:
       - 'backend/**'
-      - '.github/workflows/deploy-frontend.yaml'
+      - '.github/workflows/deploy-backend.yaml'
   workflow_dispatch:
 
 jobs:
@@ -55,7 +55,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          script:
+          script: |
             cd ${{ vars.BACKEND_DEPLOY_DIR }}
             echo "FRONTEND_URL=${{ vars.FRONTEND_BASE_URL }}" > .env
             pm2 start ecosystem.config.js
