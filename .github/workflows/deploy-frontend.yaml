@@ -1,0 +1,43 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Go to frontend directory
+        run: cd frontend
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build project
+        run: tsc && VITE_API_BASE_URL=${{ variables.API_BASE_URL }} vite build
+
+      - name: Copy built files to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "dist/*"
+          target: "${{ variables.DEPLOY_DIR }}"
+          strip_components: 1
+          
