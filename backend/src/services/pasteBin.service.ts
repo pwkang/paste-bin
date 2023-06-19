@@ -3,10 +3,10 @@ import ms from 'ms'
 
 const prefix = 'pasteBin:'
 
-const saveJson = async (json: any) => {
+const saveJson = async (json: string) => {
   const newId = await getNewId()
 
-  await redisClient.set(prefix + newId, JSON.stringify(json), {
+  await redisClient.set(prefix + newId, json, {
     PX: ms('1d'),
   })
   return newId
